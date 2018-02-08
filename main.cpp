@@ -39,11 +39,14 @@ struct phantom {//struct('h', 0, 'k', 0,'a', 10, 'b', 10, 'alpha', 0);
 	void parallelBeamProjection(scanProtocol scannerInfo, phantom phantomInfo, double **sinogram);
 
 
-	void multiply(vector<double> x,vector<double> yDet,  double rotationMatrix[2][2],vector<double> x_rot,vector<double> y_rot, scanProtocol scannerInfo){
-		// 
+	void multiply(vector<double> x,vector<double> y,  double rotationMatrix[2][2],vector<double> x_rot,vector<double> y_rot, scanProtocol scannerInfo){
+		for (int i = 0; i<scannerInfo.Ns; i+=1){
 
+			x_rot[i] = x[i]* rotationMatrix[0][0]+ y[i]*rotationMatrix[1][0] ;
+			y_rot[i] = x[i]* rotationMatrix[0][1]+ y[i]*rotationMatrix[1][1] ; ;
+
+		}
 		return;
-
 	};
 
 	void ray_phantom_intersection(vector<double> x1, vector<double> y1, vector<double> x2, vector<double> y2, phantom phantomInfo,vector<double> p,vector<double> q) { // out: x1, x2, y1, y2
