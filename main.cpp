@@ -114,8 +114,8 @@ struct phantom {//struct('h', 0, 'k', 0,'a', 10, 'b', 10, 'alpha', 0);
 	}
 
 	parallelBeamProjection(GE_scanner, circular, sinogram);
-	std:: cout << GE_scanner.Ns << std:: endl;
-	std:: cout << sinogram[0][0] << std:: endl;
+	// std:: cout << GE_scanner.Ns << std:: endl;
+	// std:: cout << sinogram[500][500] << std:: endl;
 	return 0;  
 } 
 
@@ -126,10 +126,12 @@ void parallelBeamProjection(scanProtocol scannerInfo, phantom phantomInfo,double
 	std::vector<double> ySource(scannerInfo.Ns,1500),x_source(scannerInfo.Ns,0), y_source(scannerInfo.Ns,0); 
 	std::vector<double> p(scannerInfo.Ns,0),q(scannerInfo.Ns,0); 
 	std::vector<double> x1(scannerInfo.Ns,0),y1(scannerInfo.Ns,0),x2(scannerInfo.Ns,0),y2(scannerInfo.Ns,0); 
+	std::vector<double> test(2,0.5); 
 
 
 	double_vector theta = linspace(1e-5, 2*M_PI - 1e-5, scannerInfo.Ns);    // make room for 10 integers,
 
+    std:: cout << test[0];
 
 
 		// loop through different view angles
@@ -146,7 +148,7 @@ void parallelBeamProjection(scanProtocol scannerInfo, phantom phantomInfo,double
 		find_x_y_intercept(p, q, x_detector, y_detector, x_source, y_source, scannerInfo);  // information will be out in p, q
 
 
-        ray_phantom_intersection(x1,y1, x2, y2, phantomInfo, p, q, scannerInfo);  // x1, y1, x2, y2
+        ray_phantom_intersection(x1,y1, x2, y2, phantomInfo, p, q, scannerInfo);  // out: x1, y1, x2, y2
 
         // assign the distance between (x1, y1) and (x2, y2) to the sinogram row and repeat for each view angle
         for (int j = 0; j<scannerInfo.NTheta; j+=1){  	
