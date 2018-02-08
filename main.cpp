@@ -1,6 +1,3 @@
-	// This is my first C++ program
-
-	//It prints a line of text
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <math.h>       /* sin */
