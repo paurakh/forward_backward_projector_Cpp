@@ -50,29 +50,27 @@ struct phantom {//struct('h', 0, 'k', 0,'a', ind, 'b', ind, 'alpha', 0);
 		phantom circular = {0, 0, 100, 100, 0};
 
 		double **sinogram;
-	sinogram = new double*[GE_scanner.Ns]; // dynamic array (size ind) of pointers to int
-	for (int i = 0; i < GE_scanner.Ns; ++i) {
-		sinogram[i] = new double[GE_scanner.NTheta];
-	  // each i-th pointer is now pointing to dynamic array (size ind) of actual int values
-	}
-
-	parallelBeamProjection(GE_scanner, circular, sinogram);
-
-
-	std::ofstream myfile;
-	myfile.open ("sinogram.csv");
-	int j;
-	for (int i=0; i<GE_scanner.NTheta; i++)
-	{
-		for (j=0; j<GE_scanner.Ns ; j++){
-			myfile << sinogram[i][j] << std::endl;
+		sinogram = new double*[GE_scanner.Ns]; // dynamic array (size ind) of pointers to int
+		for (int i = 0; i < GE_scanner.Ns; ++i) {
+			sinogram[i] = new double[GE_scanner.NTheta];
+	  		// each i-th pointer is now pointing to dynamic array (size ind) of actual int values
 		}
-	}
-	myfile.close();
-	
-	
-	return 0;  
-}	 
+
+		parallelBeamProjection(GE_scanner, circular, sinogram);
+
+
+		std::ofstream myfile;
+		myfile.open ("sinogram.csv");
+		int j;
+		for (int i=0; i<GE_scanner.NTheta; i++)
+		{
+			for (j=0; j<GE_scanner.Ns ; j++){
+				myfile << sinogram[i][j] << std::endl;
+			}
+		}
+		myfile.close();
+		return 0;  
+	}	 
 
 void multiply(vector<double> x,vector<double> y,  double rotationMatrix[2][2],vector<double> & x_rot,vector<double> & y_rot, scanProtocol scannerInfo){
 	for (int i = 0; i<scannerInfo.Ns; i+=1){
