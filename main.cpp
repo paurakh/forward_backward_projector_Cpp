@@ -41,7 +41,20 @@ struct phantom {//struct('h', 0, 'k', 0,'a', 10, 'b', 10, 'alpha', 0);
 // parallelBeam projector function declaration	
 	void parallelBeamProjection(scanProtocol scannerInfo, phantom phantomInfo, double **sinogram);
 
-	void multiply(vector<double> x,vector<double> yDet,  double rotationMatrix[2][2],vector<double> x_rot,vector<double> y_rot);
+
+	void multiply(vector<double> x,vector<double> yDet,  double rotationMatrix[2][2],vector<double> x_rot,vector<double> y_rot, scanProtocol scannerInfo){
+		// 
+
+		return;
+
+	};
+
+	void ray_phantom_intersection(vector<double> x1, vector<double> y1, vector<double> x2, vector<double> y2, phantom phantomInfo,vector<double> p,vector<double> q) { // out: x1, x2, y1, y2
+	};
+
+	void find_x_y_intercept(vector<double> p, vector<double> q, vector<double> x_detector, vector<double> y_detector, vector<double> x_source, vector<double> y_source){
+	};  // information will be out in p, q
+
 
 	int main()
 	{
@@ -61,20 +74,8 @@ struct phantom {//struct('h', 0, 'k', 0,'a', 10, 'b', 10, 'alpha', 0);
 
 	parallelBeamProjection(GE_scanner, circular, sinogram);
 	std:: cout << GE_scanner.Ns << std:: endl;
-
-	//...
-	size_t size = 10;
-
-std::vector<double> array = linspace(0, 10, size);    // make room for 10 integers,
-                                 // and initialize them to 0
-// do something with them:
-for(int i=0; i<size; ++i){
-	array[i] = i;
-	std::cout << array[i];
-}
-// no need to delete anything
-
-return 0;  
+	std:: cout << sinogram[0][0] << std:: endl;
+	return 0;  
 } 
 
 void parallelBeamProjection(scanProtocol scannerInfo, phantom phantomInfo,double **sinogram){
@@ -82,6 +83,9 @@ void parallelBeamProjection(scanProtocol scannerInfo, phantom phantomInfo,double
 	double_vector x = linspace(0, 10, scannerInfo.Ns);    // make room for 10 integers,
 	std::vector<double> yDet(scannerInfo.Ns,-1500), x_detector(scannerInfo.Ns,0),y_detector(scannerInfo.Ns,0); 
 	std::vector<double> ySource(scannerInfo.Ns,1500),x_source(scannerInfo.Ns,0), y_source(scannerInfo.Ns,0); 
+	std::vector<double> p(scannerInfo.Ns,0),q(scannerInfo.Ns,0); 
+	std::vector<double> x1(scannerInfo.Ns,0),y1(scannerInfo.Ns,0),x2(scannerInfo.Ns,0),y2(scannerInfo.Ns,0); 
+
 
 	double_vector theta = linspace(1e-5, 2*M_PI - 1e-5, scannerInfo.Ns);    // make room for 10 integers,
 
@@ -96,19 +100,23 @@ void parallelBeamProjection(scanProtocol scannerInfo, phantom phantomInfo,double
 		rotationMatrix[1][0] = sin(theta[i]);
 		rotationMatrix[1][1] = cos(theta[i]);
 
-		multiply(x, yDet, rotationMatrix, x_detector, y_detector, scannerInfo);
-		multiply(x, ySource, rotationMatrix, x_source, y_source, scannerInfo);
+		multiply(x, yDet, rotationMatrix, x_detector, y_detector, scannerInfo);  // information will be stored in x_detector, y_detector
+		multiply(x, ySource, rotationMatrix, x_source, y_source, scannerInfo);   // information will be stored in x_source, y_source
+		find_x_y_intercept(p, q, x_detector, y_detector, x_source, y_source);  // information will be out in p, q
 
 
-	}
+        ray_phantom_intersection(x1,y1, x2, y2, phantomInfo, p, q);  // x1, y1, x2, y2
 
-	return;
+        // assign the distance between (x1, y1) and (x2, y2) to the sinogram row and repeat for each view angle
+        for (int j = 0; j<scannerInfo.NTheta; j+=1){  	
+        	sinogram[i][j] = pow(pow(x1[j]-x2[j],2) + pow(y1[j]-y2[j],2),0.5);
+        }
+
+    }
+
+    return;
 }
 
-	void multiply(vector<double> x,vector<double> yDet,  double rotationMatrix[2][2],vector<double> x_rot,vector<double> y_rot, scanProtocol scannerInfo){
-		// 
 
-		return;
 
-	};
 
