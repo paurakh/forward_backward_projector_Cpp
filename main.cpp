@@ -49,11 +49,41 @@ struct phantom {//struct('h', 0, 'k', 0,'a', 10, 'b', 10, 'alpha', 0);
 		return;
 	};
 
-	void ray_phantom_intersection(vector<double> x1, vector<double> y1, vector<double> x2, vector<double> y2, phantom phantomInfo,vector<double> p,vector<double> q) { // out: x1, x2, y1, y2
+	void ray_phantom_intersection(vector<double> x1, vector<double> y1, vector<double> x2, vector<double> y2, phantom phantomInfo,vector<double> p,vector<double> q, scanProtocol scannerInfo) { // out: x1, x2, y1, y2
 	// % calculate x and y intercept for these rotated array
-    
+    double M, N, O, determinant;
+    // parameter for line
+		std::vector<double> m(scannerInfo.Ns,0),c(scannerInfo.Ns,0); 
+		for (int i=0; i<scannerInfo.Ns; i+=1){
+			m[i] = -q[i]/p[i];
+			c[i] = q[i];
+		}
 
+	// parameter for ellipse
+		double A = pow(cos(phantomInfo.alpha) /phantomInfo.a,2)  + pow(sin(phantomInfo.alpha)/ phantomInfo.b,2) ;
+		double B = - 2 * cos (phantomInfo.alpha) * sin(phantomInfo.alpha) * (pow(phantomInfo.a,-2) - pow(phantomInfo.b,-2));
+		double C = pow(sin(phantomInfo.alpha)/phantomInfo.a,2) + pow(cos(phantomInfo.alpha) / phantomInfo.b,2);
 
+		for (int i = 0; i < scannerInfo.Ns; i+=1){
+	// handle case for inifinte slope .i.e. q = inf
+		if (isinf(q[i]))
+			{
+
+			} else 
+				M =  A + B*m[i] + C* pow(m[i],2);
+    			N = B*c[i] + 2*C*m[i]*c[i] - 2*A*phantomInfo.h - phantomInfo.k*B - m[i]* (2*C*phantomInfo.k+ B* phantomInfo.h);
+    			O = C*pow(c[i],2) - c[i]* (2*C*phantomInfo.k + B*phantomInfo.h) + A*pow(phantomInfo.h,2) + B*phantomInfo.h*phantomInfo.k + C*pow(phantomInfo.k,2) -1 ;
+				
+    			determinant = pow(N, 2) - 4 * O * N;
+    			x1[i] = (- N + pow(determinant,0.5)) / (2*M);
+    			x2[i] = (- N - pow(determinant,0.5)) / (2*M);;
+    			y1[i] = m[i]*x1[i] + c[i];
+    			y2[i] = m[i]*x2[i] + c[i];
+    			// std:: cout << M;
+			{
+
+			};
+		}
 	};
 
 	void find_x_y_intercept(vector<double> p, vector<double> q, vector<double> x1, vector<double> y1, vector<double> x2, vector<double> y2, scanProtocol scannerInfo){
@@ -116,7 +146,7 @@ void parallelBeamProjection(scanProtocol scannerInfo, phantom phantomInfo,double
 		find_x_y_intercept(p, q, x_detector, y_detector, x_source, y_source, scannerInfo);  // information will be out in p, q
 
 
-        ray_phantom_intersection(x1,y1, x2, y2, phantomInfo, p, q);  // x1, y1, x2, y2
+        ray_phantom_intersection(x1,y1, x2, y2, phantomInfo, p, q, scannerInfo);  // x1, y1, x2, y2
 
         // assign the distance between (x1, y1) and (x2, y2) to the sinogram row and repeat for each view angle
         for (int j = 0; j<scannerInfo.NTheta; j+=1){  	
