@@ -32,7 +32,7 @@ struct phantom {//struct('h', 0, 'k', 0,'a', ind, 'b', ind, 'alpha', 0);
 		double a; // x semi-axis [cm]
 		double b; // y semi-axis [cm]
 		double alpha; // rotational angle of ellipse [radians]
-	};
+	}
 
 // parallelBeam projector function declaration	
 	void parallelBeamProjection(scanProtocol scannerInfo, phantom phantomInfo, double **sinogram);
@@ -76,7 +76,7 @@ void multiply(vector<double> x,vector<double> y,  double rotationMatrix[2][2],ve
 
 		}
 	return;
-	};
+	}
 
 void ray_phantom_intersection(vector<double> & x1, vector<double> & y1, vector<double> & x2, vector<double> & y2, phantom phantomInfo,vector<double> p,vector<double> q, scanProtocol scannerInfo) { // out: x1, x2, y1, y2
 	// % calculate x and y intercept for these rotated array
@@ -129,7 +129,7 @@ void ray_phantom_intersection(vector<double> & x1, vector<double> & y1, vector<d
 			}
 		}
 	}
-};
+}
 
 
 void find_x_y_intercept(vector<double> & p, vector<double> & q, vector<double> x1, vector<double> y1, vector<double> x2, vector<double> y2, scanProtocol scannerInfo){
@@ -137,7 +137,7 @@ void find_x_y_intercept(vector<double> & p, vector<double> & q, vector<double> x
 		q[i] = (y1[i]/x1[i] - y2[i]/x2[i])/(1/x1[i]-1/x2[i]);
 		p[i] =1/(1/x1[i] - y1[i]/(x1[i]*q[i]));
 	}
-};  // information will be out in p, q
+}  // information will be out in p, q
 
 void parallelBeamProjection(scanProtocol scannerInfo, phantom phantomInfo,double **sinogram){
 	double rotationMatrix [2][2];
