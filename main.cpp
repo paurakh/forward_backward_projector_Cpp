@@ -50,9 +50,20 @@ struct phantom {//struct('h', 0, 'k', 0,'a', 10, 'b', 10, 'alpha', 0);
 	};
 
 	void ray_phantom_intersection(vector<double> x1, vector<double> y1, vector<double> x2, vector<double> y2, phantom phantomInfo,vector<double> p,vector<double> q) { // out: x1, x2, y1, y2
+	// % calculate x and y intercept for these rotated array
+    
+
+
 	};
 
-	void find_x_y_intercept(vector<double> p, vector<double> q, vector<double> x_detector, vector<double> y_detector, vector<double> x_source, vector<double> y_source){
+	void find_x_y_intercept(vector<double> p, vector<double> q, vector<double> x1, vector<double> y1, vector<double> x2, vector<double> y2, scanProtocol scannerInfo){
+	// q = (xyDetRot(:,2) ./ xyDetRot(:,1) - xySourceRot(:,2) ./ xySourceRot(:,1)) ...
+        // ./ (1./xyDetRot(:,1) - 1 ./xySourceRot(:,1));
+    // p = 1 ./ (1 ./xyDetRot(:,1)- xyDetRot(:,2) ./ (xyDetRot(:,1) .*q));
+		for (int i = 0; i<scannerInfo.Ns; i+=1){
+			q[i] = (y1[i]/x1[i] - y2[i]/x2[i])/(1/x1[i]-1/x2[i]);
+			p[i] =1/(1/x1[i] - y1[i]/(x1[i]*q[i]));
+		}
 	};  // information will be out in p, q
 
 
@@ -102,7 +113,7 @@ void parallelBeamProjection(scanProtocol scannerInfo, phantom phantomInfo,double
 
 		multiply(x, yDet, rotationMatrix, x_detector, y_detector, scannerInfo);  // information will be stored in x_detector, y_detector
 		multiply(x, ySource, rotationMatrix, x_source, y_source, scannerInfo);   // information will be stored in x_source, y_source
-		find_x_y_intercept(p, q, x_detector, y_detector, x_source, y_source);  // information will be out in p, q
+		find_x_y_intercept(p, q, x_detector, y_detector, x_source, y_source, scannerInfo);  // information will be out in p, q
 
 
         ray_phantom_intersection(x1,y1, x2, y2, phantomInfo, p, q);  // x1, y1, x2, y2
